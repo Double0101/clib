@@ -1,0 +1,2 @@
+/Users/Double/Documents/workspace/Projects/clib/build/CMakeFiles/rebuild_cache.dir
+/Users/Double/Documents/workspace/Projects/clib/build/CMakeFiles/edit_cache.dir
