@@ -7,6 +7,17 @@
 void add_first_node(struct linkedlist* list, struct node* n);
 void add_last_node(struct linkedlist* list, struct node* n);
 
+
+
+struct linkedlist*
+new_linkedlist()
+{
+    struct linkedlist *list = malloc(sizeof(*list));
+    list -> head = list -> tail = NULL;
+    list -> size = 0;
+    return list;
+}
+
 struct node*
 new_node(void* data)
 {
@@ -62,6 +73,16 @@ void
 linked_node_free(struct node* n)
 {
     free(n);
+}
+
+void
+clear_linked_list(struct linkedlist* list)
+{
+    int i = list -> size;
+    while (i-- != 0)
+    {
+        remove_node(list, 0);
+    }
 }
 
 int
