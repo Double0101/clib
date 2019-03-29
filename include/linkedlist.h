@@ -1,5 +1,5 @@
-#ifndef __LIBS_LINKEDLIST_H__
-#define __LIBS_LINKEDLIST_H__
+#ifndef __CLIB_LINKEDLIST_H__
+#define __CLIB_LINKEDLIST_H__
 
 struct node
 {
