@@ -1,5 +1,8 @@
-cmake_minimum_required ( VERSION 2.8 )
+cmake_minimum_required(VERSION 3.13)
+project(clib)
 
-project ( clib )
+set(CMAKE_CXX_STANDARD 14)
 
-include_directories ( ./incldue/ )
+include_directories(example)
+include_directories(include)
+include_directories(util)
