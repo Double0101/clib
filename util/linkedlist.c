@@ -71,6 +71,7 @@ get(struct linkedlist* list, int index)
 void 
 linked_node_free(struct node* n)
 {
+    free(n -> data);
     free(n);
 }
 
