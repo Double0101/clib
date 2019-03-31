@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "../include/linkedlist.h"
+#include "../../include/linkedlist.h"
 
 void add_first_node(struct linkedlist* list, struct node* n);
 void add_last_node(struct linkedlist* list, struct node* n);
@@ -18,7 +18,7 @@ new_linkedlist()
 }
 
 struct node*
-new_node(void* data)
+linked_new_node(void* data)
 {
     struct node *newnode;
     newnode = malloc(sizeof(*newnode));
@@ -27,21 +27,21 @@ new_node(void* data)
 }
 
 void 
-add_first(struct linkedlist* list, void* data)
+linked_add_first(struct linkedlist* list, void* data)
 {
     struct node *newnode = new_node(data);
     add_first_node(list, newnode);
 }
 
 void
-add_last(struct linkedlist* list, void* data)
+linked_add_last(struct linkedlist* list, void* data)
 {
     struct node *newnode = new_node(data);
     add_last_node(list, newnode);
 }
 
 struct node*
-contains(struct linkedlist* list, struct node* n)
+linkedlist_contains(struct linkedlist* list, struct node* n)
 {
     assert(n);
     struct node* nn = list -> head;
@@ -53,7 +53,7 @@ contains(struct linkedlist* list, struct node* n)
 }
 
 struct node*
-get(struct linkedlist* list, int index)
+linkedlist_get(struct linkedlist* list, int index)
 {
     if (index < list -> size) 
     {
@@ -86,7 +86,7 @@ clear_linked_list(struct linkedlist* list)
 }
 
 int
-index(struct linkedlist* list, struct node* n)
+linked_index(struct linkedlist* list, struct node* n)
 {
     int idx = 0;
     struct node* nn = list -> head;
@@ -100,14 +100,14 @@ index(struct linkedlist* list, struct node* n)
 }
 
 void
-remove_node(struct linkedlist* list, int index)
+linked_remove_node(struct linkedlist* list, int index)
 {
     struct node* n = remove_and_get(list, index);
     linked_node_free(n);
 }
 
 struct node*
-remove_and_get(struct linkedlist* list, int index)
+linked_remove_and_get(struct linkedlist* list, int index)
 {
     struct node* n = get(list, index);
     if (!n) return NULL;
@@ -136,14 +136,14 @@ remove_and_get(struct linkedlist* list, int index)
 }
 
 void
-insert_data_into(struct linkedlist* list, void* data, int index)
+linked_insert_data_into(struct linkedlist* list, void* data, int index)
 {
     struct node* nn = new_node(data);
     insert_into(list, nn, index);
 }
 
 void
-insert_into(struct linkedlist* list, struct node* n, int index)
+linked_insert_into(struct linkedlist* list, struct node* n, int index)
 {
     assert(index >= 0 && index <= list -> size && n);
     if (index == 0)

@@ -15,6 +15,8 @@ struct arraylist
 struct arraylist* new_arraylist(int capacity);
 void resize_arraylist(struct arraylist* list, int new_capacity);
 void clear_arraylist(struct arraylist* list);
-void* arraylist_replace(struct arraylist* list, int index, void* data);
+void arraylist_add(struct arraylist* list, void* data);
+void arraylist_delete(struct arraylist* list, int index);
 void arraylist_insert(struct arraylist* list, int index, void* data);
+int arraylist_contains(struct arraylist* list, void* data);
 #endif //CLIB_ARRAYLIST_H
