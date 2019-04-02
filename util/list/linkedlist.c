@@ -29,14 +29,14 @@ linked_new_node(void* data)
 void 
 linked_add_first(struct linkedlist* list, void* data)
 {
-    struct node *newnode = new_node(data);
+    struct node *newnode = linked_new_node(data);
     add_first_node(list, newnode);
 }
 
 void
 linked_add_last(struct linkedlist* list, void* data)
 {
-    struct node *newnode = new_node(data);
+    struct node *newnode = linked_new_node(data);
     add_last_node(list, newnode);
 }
 
@@ -81,7 +81,7 @@ clear_linked_list(struct linkedlist* list)
     int i = list -> size;
     while (i-- != 0)
     {
-        remove_node(list, 0);
+        linked_remove_node(list, 0);
     }
 }
 
@@ -102,14 +102,14 @@ linked_index(struct linkedlist* list, struct node* n)
 void
 linked_remove_node(struct linkedlist* list, int index)
 {
-    struct node* n = remove_and_get(list, index);
+    struct node* n = linked_remove_and_get(list, index);
     linked_node_free(n);
 }
 
 struct node*
 linked_remove_and_get(struct linkedlist* list, int index)
 {
-    struct node* n = get(list, index);
+    struct node* n = linkedlist_get(list, index);
     if (!n) return NULL;
     if (n -> pre && n -> next)
     {
@@ -138,8 +138,8 @@ linked_remove_and_get(struct linkedlist* list, int index)
 void
 linked_insert_data_into(struct linkedlist* list, void* data, int index)
 {
-    struct node* nn = new_node(data);
-    insert_into(list, nn, index);
+    struct node* nn = linked_new_node(data);
+    linked_insert_into(list, nn, index);
 }
 
 void
@@ -156,7 +156,7 @@ linked_insert_into(struct linkedlist* list, struct node* n, int index)
     }
     else
     {
-        struct node* nn = get(list, index - 1);
+        struct node* nn = linkedlist_get(list, index - 1);
         nn -> next -> pre = n;
         n -> next = nn;
         nn -> next = n;

@@ -19,7 +19,7 @@ struct linkedlist* new_linkedlist();
 struct node* linked_new_node(void* data);
 void linked_list_free(struct linkedlist* list);
 void linked_node_free(struct node* n);
-void clear_linked_list(struct linkedlist* list)
+void clear_linked_list(struct linkedlist* list);
 void linked_add_first(struct linkedlist* list, void* data);
 void linkedlist_add_last(struct linkedlist* list, void* data);
 struct node* linkedlist_contains(struct linkedlist* list, struct node* n);

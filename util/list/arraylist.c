@@ -12,7 +12,7 @@ struct arraylist*
 new_arraylist(int capacity)
 {
     struct arraylist *list;
-    list = malloc(sizeof(*list));
+    list = malloc(sizeof(struct arraylist));
     list -> capacity = capacity;
     list -> size = 0;
     list -> data = malloc(capacity * sizeof(void*));
@@ -52,7 +52,7 @@ clear_arraylist(struct arraylist* list)
 void
 arraylist_add(struct arraylist* list, void* data)
 {
-    if (list -> size = list -> capacity)
+    if (list -> size == list -> capacity)
     {
         resize_arraylist(list, 2 * list -> capacity);
     }
