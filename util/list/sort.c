@@ -27,6 +27,24 @@ bubble_sort_arraylist(struct arraylist* list, int start, int end, int compare(vo
     }
 }
 
+void
+bubble_sort_linkedlist(struct linkedlist* list, int start, int end, int compare(void* data1, void* data2))
+{
+    for (int i = 0; i < list -> size - 1; ++i)
+    {
+        for (int j = 0; j < list -> size - 1 - i; ++j)
+        {
+            if (compare(linkedlist_get(list, j) -> data, linkedlist_get(list, j + 1) -> data))
+            {
+                void *tmp = linkedlist_get(list, j) -> data;
+                linkedlist_get(list, j) -> data = linkedlist_get(list, j + 1) -> data;
+                linkedlist_get(list, j + 1) -> data = tmp;
+            }
+        }
+
+    }
+}
+
 int
 arraylist_partition(struct arraylist* list, int start, int end, int compare(void* data1, void* data2))
 {
@@ -47,6 +65,26 @@ arraylist_partition(struct arraylist* list, int start, int end, int compare(void
     return i;
 }
 
+int
+linkedlist_partition(struct linkedlist* list, int start, int end, int compare(void* data1, void* data2))
+{
+    void* x = linkedlist_get(list, end) -> data;
+    int i = start - 1;
+    int j;
+    for (j = start; j < end; ++j)
+    {
+        if (compare(linkedlist_get(list, j) -> data, x) <= 0)
+        {
+            void *tmp = linkedlist_get(list, ++i) -> data;
+            linkedlist_get(list, j) -> data = linkedlist_get(list, i) -> data;
+            linkedlist_get(list, i) -> data = tmp;
+        }
+    }
+    linkedlist_get(list, end) -> data = linkedlist_get(list, ++i) -> data;
+    linkedlist_get(list, i) -> data = x;
+    return i;
+}
+
 void
 quick_sort_arraylist(struct arraylist* list, int start, int end, int compare(void* data1, void* data2))
 {
@@ -57,4 +95,15 @@ quick_sort_arraylist(struct arraylist* list, int start, int end, int compare(voi
         quick_sort_arraylist(list, p + 1, end, compare);
     }
 
+}
+
+void
+quick_sort_linkedlist(struct linkedlist* list, int start, int end, int compare(void* data1, void* data2))
+{
+    if (end > start)
+    {
+        int p = linkedlist_partition(list, start, end, compare);
+        quick_sort_linkedlist(list, start, p - 1, compare);
+        quick_sort_linkedlist(list, p + 1, end, compare);
+    }
 }
