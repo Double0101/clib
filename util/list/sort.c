@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "arraylist.h"
 #include "linkedlist.h"
@@ -105,5 +106,41 @@ quick_sort_linkedlist(struct linkedlist* list, int start, int end, int compare(v
         int p = linkedlist_partition(list, start, end, compare);
         quick_sort_linkedlist(list, start, p - 1, compare);
         quick_sort_linkedlist(list, p + 1, end, compare);
+    }
+}
+
+void
+insertion_sort_arraylist(struct arraylist* list, int start, int end, int compare(void* data1, void* data2))
+{
+    int i;
+    for (i = 1; i < list -> size; ++i)
+    {
+        void* element = list -> data[i];
+        int j = i - 1;
+
+        while (j >= 0 && compare(list -> data[j], element) > 0)
+        {
+            list -> data[j + 1] = list -> data[j];
+            --j;
+        }
+        list -> data[j + 1] = element;
+    }
+}
+
+void
+insertion_sort_linkedlist(struct linkedlist* list, int start, int end, int compare(void* data1, void* data2))
+{
+    int i;
+    for (i = 1; i < list -> size; ++i)
+    {
+        struct node* element = linkedlist_get(list, i);
+        int j = i - 1;
+
+        while (j >= 0 && compare(linkedlist_get(list, j) -> data, element -> data) > 0)
+        {
+            linkedlist_get(list, j + 1) -> data = linkedlist_get(list, j) -> data;
+            --j;
+        }
+        linkedlist_get(list, j + 1) -> data = element -> data;
     }
 }
