@@ -9,5 +9,6 @@ void insertion_sort_arraylist(struct arraylist* list, int start, int end, int co
 void insertion_sort_linkedlist(struct linkedlist* list, int start, int end, int compare(void* data1, void* data2));
 void merge_sort_arraylist(struct arraylist* list, int start, int end, int compare(void* data1, void* data2));
 void merge_sort_linkedlist(struct linkedlist* list, int start, int end, int compare(void* data1, void* data2));
+void arraylist_heap_sort(struct arraylist* list, int compare(void* data1, void* data2));
 
 #endif

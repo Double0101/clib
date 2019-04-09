@@ -242,3 +242,75 @@ merge_sort_linkedlist(struct linkedlist* list, int start, int end, int compare(v
         linkedlist_merge(list, start, div, end, compare);
     }
 }
+
+inline
+int
+heap_left(int index)
+{
+    return (index << 1) + 1;
+}
+
+inline
+int
+heap_right(int index)
+{
+    return (++index) << 1;
+}
+
+inline
+int
+heap_parent(int index)
+{
+    return (--index) >> 1;
+}
+
+void
+arraylist_heapify(struct arraylist* list, int index, int heap_size, int compare(void* data1, void* data2))
+{
+    int l = heap_left(index);
+    int r = heap_right(index);
+    int largest;
+    if (l < heap_size && compare(list -> data[l], list -> data[index]) > 0)
+    {
+        largest = l;
+    }
+    else
+    {
+        largest = index;
+    }
+    if (r < heap_size && compare(list -> data[r], list -> data[largest]) > 0)
+    {
+        largest = r;
+    }
+    if (largest != index)
+    {
+        void* tmp = list -> data[largest];
+        list -> data[largest] = list -> data[index];
+        list -> data[index] = tmp;
+        arraylist_heapify(list, largest, heap_size, compare);
+    }
+}
+
+void
+arraylist_build_heap(struct arraylist* list, int compare(void* data1, void* data2))
+{
+    int i = heap_parent(list -> size - 1);
+    for (; i <= 0 ; --i)
+    {
+        arraylist_heapify(list, i, list -> size, compare);
+    }
+}
+
+void
+arraylist_heap_sort(struct arraylist* list, int compare(void* data1, void* data2))
+{
+    arraylist_build_heap(list, compare);
+    int i = list -> size - 1;
+    while (i > 0)
+    {
+        void* tmp = list -> data[i];
+        list -> data[i] = list -> data[0];
+        list -> data[0] = tmp;
+        arraylist_heapify(list, 0, i--, compare);
+    }
+}
