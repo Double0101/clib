@@ -9,8 +9,8 @@ struct qnode
 {
     void *weight;
     void *element;
-    void *next;
-    void *pre;
+    struct qnode* next;
+    struct qnode* pre;
 };
 
 struct priorityqueue
@@ -21,6 +21,9 @@ struct priorityqueue
     int (*compare)(void* data1, void* data2);
 };
 
-struct prioriryqueue* new_priorityqueue(int compare(void* data1, void* data2));
+struct priorityqueue* new_priorityqueue(int compare(void* data1, void* data2));
+void* priority_extract_first(struct priorityqueue* queue);
+void* priority_first(struct priorityqueue* queue);
+void priority_insert(struct priorityqueue* queue, void* weight, void* element);
 
 #endif //CLIB_PRIORITYQUEUE_H
