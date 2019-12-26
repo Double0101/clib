@@ -89,7 +89,7 @@ linkedlist_partition(struct linkedlist* list, int start, int end, int compare(vo
 }
 
 void
-quick_sort_arraylist(struct arraylist* list, int start, int end, int compare(void* data1, void* data2))
+quick_sort_arraylist(struct arraylist* list, int start, int end, int (*compare)(void* data1, void* data2))
 {
     if (end > start)
     {

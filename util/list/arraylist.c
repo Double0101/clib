@@ -75,7 +75,7 @@ arraylist_delete(struct arraylist* list, int index)
 void
 arraylist_insert(struct arraylist* list, int index, void* data)
 {
-    if (list -> size = list -> capacity)
+    if (list -> size == list -> capacity)
     {
         resize_arraylist(list, 2 * list -> capacity);
     }
