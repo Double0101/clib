@@ -5,18 +5,24 @@
 #ifndef __CLIB_ARRAYLIST_H__
 #define __CLIB_ARRAYLIST_H__
 
+#define VALID_FLAG 0xff
+#define GENUINE(x) ((char*)x + 1)
+
 struct arraylist
 {
-    int size;
-    int capacity;
-    void** data;
+    unsigned int capacity;
+    unsigned int e_size;
+    char** data;
 };
 
-struct arraylist* new_arraylist(int capacity);
-void resize_arraylist(struct arraylist* list, int new_capacity);
-void clear_arraylist(struct arraylist* list);
-void arraylist_add(struct arraylist* list, void* data);
-void arraylist_delete(struct arraylist* list, int index);
-void arraylist_insert(struct arraylist* list, int index, void* data);
-int arraylist_contains(struct arraylist* list, void* data);
+struct arraylist* new_arraylist(unsigned int, unsigned int);
+void resize_arraylist(struct arraylist*, unsigned int);
+void clear_arraylist(struct arraylist*, void func(void *));
+void release_arraylist(struct arraylist*, void func(void *));
+void arraylist_delete(struct arraylist*, unsigned int, void func(void *));
+void arraylist_insert(struct arraylist*, unsigned int, void*);
+void arraylist_pop(struct arraylist*, unsigned int, void*);
+unsigned int arraylist_contains(struct arraylist*, void*,
+        int compare(void*, void*));
+
 #endif //CLIB_ARRAYLIST_H

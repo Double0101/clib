@@ -4,109 +4,124 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <stddef.h>
 #include <string.h>
 
 #include "../../include/arraylist.h"
 
+
 struct arraylist*
-new_arraylist(int capacity)
+new_arraylist(unsigned int capacity, unsigned int element_size)
 {
     struct arraylist *list;
+
     list = malloc(sizeof(struct arraylist));
-    list -> capacity = capacity;
-    list -> size = 0;
-    list -> data = malloc(capacity * sizeof(void*));
-    int i;
-    for (i = 0; i < capacity; ++i) {
-        (list -> data)[i] = NULL;
-    }
+    list->capacity = capacity;
+    list->e_size = element_size;
+    list->data = calloc(capacity * element_size + capacity);
+
     return list;
 }
 
-void
-resize_arraylist(struct arraylist* list, int new_capacity)
-{
-    void **data = malloc(new_capacity * sizeof(void*));
-    memcpy(data, list -> data, (list -> capacity) * sizeof(void*));
-    list -> data = data;
-    list -> capacity = new_capacity;
-    free(list -> data);
-}
 
 void
-clear_arraylist(struct arraylist* list)
+resize_arraylist(struct arraylist* list, unsigned int new_capacity)
 {
-    int i;
-    for (i = 0; i < list -> size; ++i)
-    {
-        free((list -> data)[i]);
-        (list -> data)[i] = NULL;
+    list->data = realloc(list->data,
+            new_capacity * (list->e_size) + new_capacity);
+    if (list->data) {
+        list->capacity = new_capacity;
     }
-    free(list -> data);
-    list -> data = NULL;
-    list -> capacity = list -> size = 0;
+}
+
+
+void
+clear_arraylist(struct arraylist* list, void func(void *e))
+{
+    unsigned int i;
+    size_t ssize = list->e_size + 1;
+    char *p = list->data;
+    /* release elements */
+    if (func) {
+        for (i = 0; i < list->capacity; ++i) {
+            p += ssize;
+
+            if (((*p) & VALID_FLAG) == VALID_FLAG)
+                func(GENUINE(p));
+        }
+    }
+}
+
+
+void
+release_arraylist(struct arraylist* list, void func(void *e))
+{
+    clear_arraylist(list, func);
+    free(list->data);
+    list->data = NULL;
+    list->capacity = 0;
     free(list);
     list = NULL;
 }
 
-void
-arraylist_add(struct arraylist* list, void* data)
-{
-    if (list -> size == list -> capacity)
-    {
-        resize_arraylist(list, 2 * list -> capacity);
-    }
-
-    (list -> data)[list -> size] = data;
-    ++(list -> size);
-}
 
 void
-arraylist_delete(struct arraylist* list, int index)
+arraylist_delete(struct arraylist* list, unsigned int index, void func(void *e))
 {
-    free((list -> data)[index]);
-    (list -> data)[index] = NULL;
-    memmove((char*) (list -> data) + index * sizeof(void*),
-            (char*) (list -> data) + (index + 1) * sizeof(void*),
-            ((list -> size) - index - 1) * sizeof(void*));
-    --(list -> size);
+    size_t ssize = list->e_size + 1;
+    char *e = list->data;
+    if (index >= list->capacity)
+        return;
+
+    e += (index * ssize);
+    if (((*e) & VALID_FLAG) == VALID_FLAG)
+        func(GENUINE(e));
+    memset(e, 0, ssize);
 }
+
 
 void
-arraylist_insert(struct arraylist* list, int index, void* data)
+arraylist_insert(struct arraylist* list, unsigned int index, void* data)
 {
-    if (list -> size == list -> capacity)
-    {
-        resize_arraylist(list, 2 * list -> capacity);
-    }
-    memmove((char*) (list -> data) + (index + 1) * sizeof(void*),
-           (char*) (list -> data) + index * sizeof(void*),
-           ((list -> size) - index) * sizeof(void*));
-    (list -> data)[index] = data;
-    ++(list -> size);
+    char *e = list->data;
+    size_t ssize = list->e_size + 1;
+    if (index >= list->capacity)
+        return;
+    e += (index * ssize);
+    *e = VALID_FLAG;
+    memcpy(GENUINE(e), data, list->e_size);
 }
 
-void*
-arraylist_remove_and_get(struct arraylist* list, int index, void* data)
+
+void
+arraylist_pop(struct arraylist* list, unsigned int index, void* data)
 {
-    void *d = (list -> data)[index];
-    (list -> data)[index] = NULL;
-    memmove((char*) (list -> data) + index * sizeof(void*),
-            (char*) (list -> data) + (index + 1) * sizeof(void*),
-            ((list -> size) - index - 1) * sizeof(void*));
-    --(list -> size);
-    return d;
+    size_t ssize = list->e_size + 1;
+    char *d = list->data;
+    if (index >= list->capacity)
+        return;
+    e += (index * ssize);
+    if (((*e) & VALID_FLAG) != VALID_FLAG)
+        return;
+
+    memcpy(data, GENUINE(e), list->e_size);
+    memset(d, 0, list->e_size + 1);
 }
 
-int
-arraylist_contains(struct arraylist* list, void* data)
+
+unsigned int
+arraylist_contains(struct arraylist* list, void* data, int compare(void*, void*))
 {
-    void* element = *(list -> data);
+    char* element = list->data;
+    int ssize = list->e_size;
     int i;
-    int size = list -> size;
-    for (i = 0; i < size; ++i, ++element)
+    for (i = 0; i < list->capacity; ++i)
     {
-        if (data == element) return 1;
+        element += ssize;
+        if (((*element) & VALID_FLAG) != VALID_FLAG)
+            continue;
+        if (compare(data, GENUINE(element)) == 0)
+            return i;
     }
-    return 0;
+    return -1;
 }
