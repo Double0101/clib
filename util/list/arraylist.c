@@ -11,7 +11,8 @@
 
 
 struct arraylist*
-new_arraylist(unsigned int capacity, unsigned int element_size)
+new_arraylist(unsigned int capacity, unsigned int element_size,
+        int compare(void*, void*), void destruct(void*))
 {
     struct arraylist *list;
 
@@ -19,6 +20,8 @@ new_arraylist(unsigned int capacity, unsigned int element_size)
     list->capacity = capacity;
     list->e_size = element_size;
     list->data = calloc(capacity * element_size + capacity);
+    list->compare = compare;
+    list->destruct = destruct;
 
     return list;
 }
@@ -36,27 +39,25 @@ resize_arraylist(struct arraylist* list, unsigned int new_capacity)
 
 
 void
-clear_arraylist(struct arraylist* list, void func(void *e))
+clear_arraylist(struct arraylist* list)
 {
     unsigned int i;
     size_t ssize = list->e_size + 1;
     char *p = list->data;
     /* release elements */
-    if (func) {
-        for (i = 0; i < list->capacity; ++i) {
-            p += ssize;
+    for (i = 0; i < list->capacity; ++i) {
+        p += ssize;
 
-            if (((*p) & VALID_FLAG) == VALID_FLAG)
-                func(GENUINE(p));
-        }
+        if (((*p) & VALID_FLAG) == VALID_FLAG)
+            list->destruct(GENUINE(p));
     }
 }
 
 
 void
-release_arraylist(struct arraylist* list, void func(void *e))
+release_arraylist(struct arraylist* list)
 {
-    clear_arraylist(list, func);
+    clear_arraylist(list);
     free(list->data);
     list->data = NULL;
     list->capacity = 0;
@@ -66,7 +67,7 @@ release_arraylist(struct arraylist* list, void func(void *e))
 
 
 void
-arraylist_delete(struct arraylist* list, unsigned int index, void func(void *e))
+arraylist_delete(struct arraylist* list, unsigned int index)
 {
     size_t ssize = list->e_size + 1;
     char *e = list->data;
@@ -75,7 +76,7 @@ arraylist_delete(struct arraylist* list, unsigned int index, void func(void *e))
 
     e += (index * ssize);
     if (((*e) & VALID_FLAG) == VALID_FLAG)
-        func(GENUINE(e));
+        list->destruct(GENUINE(e));
     memset(e, 0, ssize);
 }
 
@@ -110,7 +111,7 @@ arraylist_pop(struct arraylist* list, unsigned int index, void* data)
 
 
 unsigned int
-arraylist_contains(struct arraylist* list, void* data, int compare(void*, void*))
+arraylist_contains(struct arraylist* list, void* data)
 {
     char* element = list->data;
     int ssize = list->e_size;
@@ -120,7 +121,7 @@ arraylist_contains(struct arraylist* list, void* data, int compare(void*, void*)
         element += ssize;
         if (((*element) & VALID_FLAG) != VALID_FLAG)
             continue;
-        if (compare(data, GENUINE(element)) == 0)
+        if (list->compare(data, GENUINE(element)) == 0)
             return i;
     }
     return -1;
