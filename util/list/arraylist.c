@@ -17,6 +17,7 @@ new_arraylist(unsigned int capacity, unsigned int element_size,
     struct arraylist *list;
 
     list = malloc(sizeof(struct arraylist));
+    list->size = 0;
     list->capacity = capacity;
     list->e_size = element_size;
     list->data = calloc(capacity * element_size + capacity);
@@ -45,7 +46,7 @@ clear_arraylist(struct arraylist* list)
     size_t ssize = list->e_size + 1;
     char *p = list->data;
     /* release elements */
-    for (i = 0; i < list->capacity; ++i) {
+    for (i = 0; i < list->size; ++i) {
         p += ssize;
 
         if (((*p) & VALID_FLAG) == VALID_FLAG)

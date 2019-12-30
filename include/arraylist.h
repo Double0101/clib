@@ -10,6 +10,7 @@
 
 struct arraylist
 {
+    unsigned int size;
     unsigned int capacity;
     unsigned int e_size;
     char** data;
