@@ -72,42 +72,48 @@ arraylist_delete(struct arraylist* list, unsigned int index)
 {
     size_t ssize = list->e_size + 1;
     char *e = list->data;
-    if (index >= list->capacity)
+    if (index >= list->size)
         return;
 
     e += (index * ssize);
     if (((*e) & VALID_FLAG) == VALID_FLAG)
         list->destruct(GENUINE(e));
-    memset(e, 0, ssize);
+    memmove(e, e + index * ssize, ssize * (list->size - index - 1));
+    --list->size;
 }
 
 
 void
-arraylist_insert(struct arraylist* list, unsigned int index, void* data)
+arraylist_insert(struct arraylist* list, void* data)
 {
     char *e = list->data;
     size_t ssize = list->e_size + 1;
-    if (index >= list->capacity)
-        return;
-    e += (index * ssize);
+    if (list->size == list->capacity) {
+        resize_arraylist(list, list->capacity << 1);
+    }
+    e += ((list->size) * ssize);
     *e = VALID_FLAG;
     memcpy(GENUINE(e), data, list->e_size);
+    if (*data)
+        *e = 0;
+    ++list->size;
 }
 
 
 void
-arraylist_pop(struct arraylist* list, unsigned int index, void* data)
+arraylist_pop(struct arraylist* list, void* data)
 {
     size_t ssize = list->e_size + 1;
     char *d = list->data;
-    if (index >= list->capacity)
+    e += ((list->size - 1) * ssize);
+    if (((*e) & VALID_FLAG) != VALID_FLAG) {
+        *data = NULL;
         return;
-    e += (index * ssize);
-    if (((*e) & VALID_FLAG) != VALID_FLAG)
-        return;
+    }
 
     memcpy(data, GENUINE(e), list->e_size);
     memset(d, 0, list->e_size + 1);
+    --list->size;
 }
 
 
@@ -115,13 +121,17 @@ unsigned int
 arraylist_contains(struct arraylist* list, void* data)
 {
     char* element = list->data;
-    int ssize = list->e_size;
+    size_t ssize = list->e_size + 1;
     int i;
-    for (i = 0; i < list->capacity; ++i)
+    for (i = 0; i < list->size; ++i)
     {
         element += ssize;
-        if (((*element) & VALID_FLAG) != VALID_FLAG)
+        if (((*element) & VALID_FLAG) != VALID_FLAG) {
+            if (!*data) {
+                return i;
+            }
             continue;
+        }
         if (list->compare(data, GENUINE(element)) == 0)
             return i;
     }

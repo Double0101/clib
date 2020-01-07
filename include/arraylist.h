@@ -18,13 +18,22 @@ struct arraylist
     void destruct(void*);
 };
 
-struct arraylist* new_arraylist(unsigned int, unsigned int);
-void resize_arraylist(struct arraylist*, unsigned int);
-void clear_arraylist(struct arraylist*);
-void release_arraylist(struct arraylist*);
-void arraylist_delete(struct arraylist*, unsigned int);
-void arraylist_insert(struct arraylist*, unsigned int, void*);
-void arraylist_pop(struct arraylist*, unsigned int, void*);
-unsigned int arraylist_contains(struct arraylist*, void*);
+struct arraylist*
+new_arraylist(unsigned int, unsigned int,
+              int compare(void*, void*), void destruct(void*));
+void
+resize_arraylist(struct arraylist*, unsigned int);
+void
+clear_arraylist(struct arraylist*);
+void
+release_arraylist(struct arraylist*);
+void
+arraylist_delete(struct arraylist*, unsigned int);
+void
+arraylist_insert(struct arraylist*, void*);
+void
+arraylist_pop(struct arraylist*, void*);
+unsigned int
+arraylist_contains(struct arraylist*, void*);
 
 #endif //CLIB_ARRAYLIST_H
