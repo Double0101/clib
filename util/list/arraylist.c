@@ -12,7 +12,7 @@
 
 struct arraylist*
 new_arraylist(unsigned int capacity, unsigned int element_size,
-        int compare(void*, void*), void destruct(void*))
+        int compare(void*, void*), void (*destruct)(void*))
 {
     struct arraylist *list;
 
@@ -20,7 +20,7 @@ new_arraylist(unsigned int capacity, unsigned int element_size,
     list->size = 0;
     list->capacity = capacity;
     list->e_size = element_size;
-    list->data = calloc(capacity * element_size + capacity);
+    list->data = calloc(capacity, element_size + 1);
     list->compare = compare;
     list->destruct = destruct;
 
@@ -50,7 +50,7 @@ clear_arraylist(struct arraylist* list)
         p += ssize;
 
         if (((*p) & VALID_FLAG) == VALID_FLAG)
-            list->destruct(GENUINE(p));
+            (*list->destruct)(GENUINE(p));
     }
 }
 
@@ -77,7 +77,7 @@ arraylist_delete(struct arraylist* list, unsigned int index)
 
     e += (index * ssize);
     if (((*e) & VALID_FLAG) == VALID_FLAG)
-        list->destruct(GENUINE(e));
+        (*list->destruct)(GENUINE(e));
     memmove(e, e + index * ssize, ssize * (list->size - index - 1));
     --list->size;
 }
@@ -94,7 +94,7 @@ arraylist_insert(struct arraylist* list, void* data)
     e += ((list->size) * ssize);
     *e = VALID_FLAG;
     memcpy(GENUINE(e), data, list->e_size);
-    if (*data)
+    if (data)
         *e = 0;
     ++list->size;
 }
@@ -105,13 +105,13 @@ arraylist_pop(struct arraylist* list, void* data)
 {
     size_t ssize = list->e_size + 1;
     char *d = list->data;
-    e += ((list->size - 1) * ssize);
-    if (((*e) & VALID_FLAG) != VALID_FLAG) {
-        *data = NULL;
+    d += ((list->size - 1) * ssize);
+    if (((*d) & VALID_FLAG) != VALID_FLAG) {
+        data = NULL;
         return;
     }
 
-    memcpy(data, GENUINE(e), list->e_size);
+    memcpy(data, GENUINE(d), list->e_size);
     memset(d, 0, list->e_size + 1);
     --list->size;
 }
@@ -127,12 +127,12 @@ arraylist_contains(struct arraylist* list, void* data)
     {
         element += ssize;
         if (((*element) & VALID_FLAG) != VALID_FLAG) {
-            if (!*data) {
+            if (!data) {
                 return i;
             }
             continue;
         }
-        if (list->compare(data, GENUINE(element)) == 0)
+        if ((*list->compare)(data, GENUINE(element)) == 0)
             return i;
     }
     return -1;

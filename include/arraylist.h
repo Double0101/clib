@@ -14,13 +14,13 @@ struct arraylist
     unsigned int capacity;
     unsigned int e_size;
     char** data;
-    int compare(void*, void*);
-    void destruct(void*);
+    int (*compare)(void*, void*);
+    void (*destruct)(void*);
 };
 
 struct arraylist*
 new_arraylist(unsigned int, unsigned int,
-              int compare(void*, void*), void destruct(void*));
+              int compare(void*, void*), void (*destruct)(void*));
 void
 resize_arraylist(struct arraylist*, unsigned int);
 void
