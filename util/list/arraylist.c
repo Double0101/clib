@@ -7,7 +7,7 @@
 #include <stddef.h>
 #include <string.h>
 
-#include "../../include/arraylist.h"
+#include "list/arraylist.h"
 
 
 struct arraylist*

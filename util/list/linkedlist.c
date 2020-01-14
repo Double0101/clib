@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "../../include/linkedlist.h"
+#include "list/linkedlist.h"
 
 void add_first_node(struct linkedlist* list, struct node* n);
 void add_last_node(struct linkedlist* list, struct node* n);

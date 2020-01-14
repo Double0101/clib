@@ -6,10 +6,10 @@
 #include <assert.h>
 #include <string.h>
 
-#include "arraylist.h"
-#include "linkedlist.h"
+#include "list/arraylist.h"
+#include "list/linkedlist.h"
 
-#include "../../include/sort.h"
+#include "sort.h"
 
 const char _TAIL_[] = "tail";
 

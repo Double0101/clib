@@ -2,7 +2,7 @@
 // Created by Double on 2019-04-11.
 //
 #include <stdlib.h>
-#include "../../include/priorityqueue.h"
+#include "priorityqueue.h"
 
 struct priorityqueue*
 new_priorityqueue(int compare(void* data1, void* data2))
